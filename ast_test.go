@@ -16,10 +16,11 @@ func TestQueryToString(t *testing.T) {
 			"name": Literal("Adam"),
 		},
 	}
-	m := MatchPattern{Elements: []PatternElement{node}}
 	q.Stmt = SingleQuery{
 		Reading: []ReadingClause{
-			{Pattern: []MatchPattern{m}},
+			{Pattern: []MatchPattern{
+				{Elements: []PatternElement{node}},
+			}},
 		},
 		ReturnItems: []Expr{
 			Symbol(user),

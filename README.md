@@ -1,2 +1,2 @@
 # cypher-parser
-Cypher language query parser in Go.
+Cypher Query Language parser in Go.
