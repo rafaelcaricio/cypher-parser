@@ -57,7 +57,7 @@ const (
 	COLON     // :
 	SEMICOLON // ;
 	DOT       // .
-	DDOT      // ..
+	DOUBLEDOT // ..
 
 	keywordBeg
 	// ALL and the following are Cypher Keywords

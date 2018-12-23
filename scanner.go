@@ -76,7 +76,7 @@ func (s *Scanner) Scan() (Token, Pos, string) {
 		return EQ, pos, ""
 	case '.':
 		if ch1, _ := s.r.read(); ch1 == '.' {
-			return DDOT, pos, ""
+			return DOUBLEDOT, pos, ""
 		}
 		s.r.unread()
 		return DOT, pos, ""

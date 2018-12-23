@@ -28,7 +28,7 @@ func TestScanInput(t *testing.T) {
 		{in: `<=1`, tok: LTE, lit: ""},
 		{in: `>`, tok: GT, lit: ""},
 		{in: `>=`, tok: GTE, lit: ""},
-		{in: `..`, tok: DDOT, lit: ""},
+		{in: `..`, tok: DOUBLEDOT, lit: ""},
 		{in: `+`, tok: PLUS, lit: ""},
 		{in: `+=`, tok: INC, lit: ""},
 		{in: `//nice try`, tok: COMMENT, lit: ""},
