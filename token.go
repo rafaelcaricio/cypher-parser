@@ -14,12 +14,15 @@ const (
 
 	literalBeg
 	// IDENT and the following are literal tokens.
-	IDENT  // main
-	NUMBER // 12345.67
-	STRING // "abc"
-	TRUE   // true
-	FALSE  // false
-	NULL   // null
+	IDENT     // main
+	NUMBER    // 12345.67
+	INTEGER   // 12345
+	STRING    // "abc"
+	BADSTRING // "abc
+	BADESCAPE // "\q
+	TRUE      // true
+	FALSE     // false
+	NULL      // null
 	literalEnd
 
 	operatorBeg
@@ -225,4 +228,11 @@ func Lookup(ident string) Token {
 		return tok
 	}
 	return IDENT
+}
+
+// Pos specifies the line and character position of a token.
+// The Char and Line are both zero-based indexes.
+type Pos struct {
+	Line int
+	Char int
 }
