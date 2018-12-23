@@ -34,6 +34,46 @@ func (s *Scanner) Scan() (Token, Pos, string) {
 		return s.scanNumber()
 	}
 
+	// Otherwise parse individual characters.
+	switch ch0 {
+	case eof:
+		return EOF, pos, ""
+	case '"':
+		return s.scanString()
+	case '\'':
+		return s.scanString()
+	case '+':
+		return PLUS, pos, ""
+	case '*':
+		return MUL, pos, ""
+	case '%':
+		return MOD, pos, ""
+	case '(':
+		return LPAREN, pos, ""
+	case ')':
+		return RPAREN, pos, ""
+	case '{':
+		return LBRACE, pos, ""
+	case '}':
+		return RBRACE, pos, ""
+	case '[':
+		return LBRACKET, pos, ""
+	case ']':
+		return RBRACKET, pos, ""
+	case ',':
+		return COMMA, pos, ""
+	case ';':
+		return SEMICOLON, pos, ""
+	case ':':
+		return COLON, pos, ""
+	case '-':
+		return SUB, pos, ""
+	case '=':
+		return EQ, pos, ""
+	case '.':
+		return DOT, pos, ""
+	}
+
 	return ILLEGAL, pos, string(ch0)
 }
 
