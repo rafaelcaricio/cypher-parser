@@ -38,6 +38,8 @@ const (
 	LTE  // <=
 	GT   // >
 	GTE  // >=
+	INC  // +=
+	BAR  // |
 
 	AND // AND
 	OR  // OR
@@ -55,6 +57,7 @@ const (
 	COLON     // :
 	SEMICOLON // ;
 	DOT       // .
+	DDOT      // ..
 
 	keywordBeg
 	// ALL and the following are Cypher Keywords

@@ -43,6 +43,10 @@ func (s *Scanner) Scan() (Token, Pos, string) {
 	case '\'':
 		return s.scanString()
 	case '+':
+		if ch1, _ := s.r.read(); ch1 == '=' {
+			return INC, pos, ""
+		}
+		s.r.unread()
 		return PLUS, pos, ""
 	case '*':
 		return MUL, pos, ""
@@ -71,7 +75,41 @@ func (s *Scanner) Scan() (Token, Pos, string) {
 	case '=':
 		return EQ, pos, ""
 	case '.':
+		if ch1, _ := s.r.read(); ch1 == '.' {
+			return DDOT, pos, ""
+		}
+		s.r.unread()
 		return DOT, pos, ""
+	case '|':
+		return BAR, pos, ""
+	case '<':
+		ch1, _ := s.r.read()
+		if ch1 == '>' {
+			return NEQ, pos, ""
+		} else if ch1 == '=' {
+			return LTE, pos, ""
+		}
+		s.r.unread()
+		return LT, pos, ""
+	case '>':
+		if ch1, _ := s.r.read(); ch1 == '=' {
+			return GTE, pos, ""
+		}
+		s.r.unread()
+		return GT, pos, ""
+	case '/':
+		ch1, _ := s.r.read()
+		if ch1 == '*' {
+			if err := s.skipUntilEndComment(); err != nil {
+				return ILLEGAL, pos, ""
+			}
+			return COMMENT, pos, ""
+		} else if ch1 == '/' {
+			s.skipUntilNewline()
+			return COMMENT, pos, ""
+		}
+		s.r.unread()
+		return DIV, pos, ""
 	}
 
 	return ILLEGAL, pos, string(ch0)
@@ -282,6 +320,36 @@ func (s *Scanner) scanDigits() string {
 		_, _ = buf.WriteRune(ch)
 	}
 	return buf.String()
+}
+
+// skipUntilNewline skips characters until it reaches a newline.
+func (s *Scanner) skipUntilNewline() {
+	for {
+		if ch, _ := s.r.read(); ch == '\n' || ch == eof {
+			return
+		}
+	}
+}
+
+// skipUntilEndComment skips characters until it reaches a '*/' symbol.
+func (s *Scanner) skipUntilEndComment() error {
+	for {
+		if ch1, _ := s.r.read(); ch1 == '*' {
+			// We might be at the end.
+		star:
+			ch2, _ := s.r.read()
+			if ch2 == '/' {
+				return nil
+			} else if ch2 == '*' {
+				// We are back in the state machine since we see a star.
+				goto star
+			} else if ch2 == eof {
+				return io.EOF
+			}
+		} else if ch1 == eof {
+			return io.EOF
+		}
+	}
 }
 
 // reader represents a buffered rune reader used by the scanner.
