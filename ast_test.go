@@ -1,29 +1,31 @@
-package cypher
+package cypher_test
 
 import (
 	"testing"
+
+	"github.com/rafaelcaricio/cypher-parser"
 )
 
 func TestQueryToString(t *testing.T) {
 	strQuery := `MATCH (user :User {name: "Adam"}) RETURN user`
 
-	q := Query{}
+	q := cypher.Query{}
 	user := "user"
-	node := NodePattern{
+	node := cypher.NodePattern{
 		Variable: &user,
 		Labels:   []string{"User"},
-		Properties: map[string]Expr{
-			"name": Literal("Adam"),
+		Properties: map[string]cypher.Expr{
+			"name": cypher.Literal("Adam"),
 		},
 	}
-	q.Stmt = SingleQuery{
-		Reading: []ReadingClause{
-			{Pattern: []MatchPattern{
-				{Elements: []PatternElement{node}},
+	q.Stmt = cypher.SingleQuery{
+		Reading: []cypher.ReadingClause{
+			{Pattern: []cypher.MatchPattern{
+				{Elements: []cypher.PatternElement{node}},
 			}},
 		},
-		ReturnItems: []Expr{
-			Symbol(user),
+		ReturnItems: []cypher.Expr{
+			cypher.Symbol(user),
 		},
 	}
 

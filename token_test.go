@@ -1,21 +1,25 @@
-package cypher
+package cypher_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/rafaelcaricio/cypher-parser"
+)
 
 func TestLookupToken(t *testing.T) {
 	for _, tc := range []struct {
 		input    string
-		expected Token
+		expected cypher.Token
 	}{
-		{"abc", IDENT},
-		{"null", NULL},
-		{"do", DO},
-		{"not", NOT},
-		{"unique", UNIQUE},
-		{"starts", STARTS},
+		{"abc", cypher.IDENT},
+		{"null", cypher.NULL},
+		{"do", cypher.DO},
+		{"not", cypher.NOT},
+		{"unique", cypher.UNIQUE},
+		{"starts", cypher.STARTS},
 	} {
-		if v := Lookup(tc.input); v != tc.expected {
-			t.Errorf("Expected token '%s' got '%s'", tokens[tc.expected], tokens[v])
+		if v := cypher.Lookup(tc.input); v != tc.expected {
+			t.Errorf("Expected token '%s' got '%s'", tc.expected, v)
 		}
 	}
 }

@@ -1,44 +1,46 @@
-package cypher
+package cypher_test
 
 import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/rafaelcaricio/cypher-parser"
 )
 
 func TestScanInput(t *testing.T) {
 	for _, tc := range []struct {
 		in  string
-		tok Token
+		tok cypher.Token
 		lit string
 	}{
-		{in: `something`, tok: IDENT, lit: "something"},
-		{in: `desc`, tok: DESC, lit: ""},
-		{in: `match`, tok: MATCH, lit: ""},
-		{in: `or`, tok: OR, lit: ""},
-		{in: `1233`, tok: INTEGER, lit: "1233"},
-		{in: `3.14`, tok: NUMBER, lit: "3.14"},
-		{in: `true`, tok: TRUE, lit: ""},
-		{in: `null`, tok: NULL, lit: ""},
-		{in: `"Hello, world!"`, tok: STRING, lit: "Hello, world!"},
-		{in: `"String\nwith\nnewline"`, tok: STRING, lit: "String\nwith\nnewline"},
-		{in: `'String\n'`, tok: STRING, lit: "String\n"},
-		{in: ``, tok: EOF, lit: ""},
-		{in: `<>`, tok: NEQ, lit: ""},
-		{in: `<`, tok: LT, lit: ""},
-		{in: `<=1`, tok: LTE, lit: ""},
-		{in: `>`, tok: GT, lit: ""},
-		{in: `>=`, tok: GTE, lit: ""},
-		{in: `..`, tok: DOUBLEDOT, lit: ""},
-		{in: `+`, tok: PLUS, lit: ""},
-		{in: `+=`, tok: INC, lit: ""},
-		{in: `//nice try`, tok: COMMENT, lit: ""},
-		{in: `/*nice another\n try*/`, tok: COMMENT, lit: ""},
-		{in: `/`, tok: DIV, lit: ""},
-		{in: `  `, tok: WS, lit: "  "},
-		{in: `[`, tok: LBRACKET, lit: ""},
+		{in: `something`, tok: cypher.IDENT, lit: "something"},
+		{in: `desc`, tok: cypher.DESC, lit: ""},
+		{in: `match`, tok: cypher.MATCH, lit: ""},
+		{in: `or`, tok: cypher.OR, lit: ""},
+		{in: `1233`, tok: cypher.INTEGER, lit: "1233"},
+		{in: `3.14`, tok: cypher.NUMBER, lit: "3.14"},
+		{in: `true`, tok: cypher.TRUE, lit: ""},
+		{in: `null`, tok: cypher.NULL, lit: ""},
+		{in: `"Hello, world!"`, tok: cypher.STRING, lit: "Hello, world!"},
+		{in: `"String\nwith\nnewline"`, tok: cypher.STRING, lit: "String\nwith\nnewline"},
+		{in: `'String\n'`, tok: cypher.STRING, lit: "String\n"},
+		{in: ``, tok: cypher.EOF, lit: ""},
+		{in: `<>`, tok: cypher.NEQ, lit: ""},
+		{in: `<`, tok: cypher.LT, lit: ""},
+		{in: `<=1`, tok: cypher.LTE, lit: ""},
+		{in: `>`, tok: cypher.GT, lit: ""},
+		{in: `>=`, tok: cypher.GTE, lit: ""},
+		{in: `..`, tok: cypher.DOUBLEDOT, lit: ""},
+		{in: `+`, tok: cypher.PLUS, lit: ""},
+		{in: `+=`, tok: cypher.INC, lit: ""},
+		{in: `//nice try`, tok: cypher.COMMENT, lit: ""},
+		{in: `/*nice another\n try*/`, tok: cypher.COMMENT, lit: ""},
+		{in: `/`, tok: cypher.DIV, lit: ""},
+		{in: `  `, tok: cypher.WS, lit: "  "},
+		{in: `[`, tok: cypher.LBRACKET, lit: ""},
 	} {
-		s := NewScanner(strings.NewReader(tc.in))
+		s := cypher.NewScanner(strings.NewReader(tc.in))
 		tok, _, lit := s.Scan()
 		if tok != tc.tok {
 			t.Errorf("For input `%s` expected token '%s' got '%s' (%s)", tc.in, tc.tok, tok, lit)
@@ -50,45 +52,45 @@ func TestScanInput(t *testing.T) {
 
 func TestScanMultiple(t *testing.T) {
 	type result struct {
-		tok Token
-		pos Pos
+		tok cypher.Token
+		pos cypher.Pos
 		lit string
 	}
 	exp := []result{
-		{tok: MATCH, pos: Pos{Line: 0, Char: 0}, lit: ""},
-		{tok: WS, pos: Pos{Line: 0, Char: 5}, lit: " "},
-		{tok: LPAREN, pos: Pos{Line: 0, Char: 6}, lit: ""},
-		{tok: IDENT, pos: Pos{Line: 0, Char: 7}, lit: "n"},
-		{tok: COLON, pos: Pos{Line: 0, Char: 8}, lit: ""},
-		{tok: IDENT, pos: Pos{Line: 0, Char: 9}, lit: "Person"},
-		{tok: RPAREN, pos: Pos{Line: 0, Char: 15}, lit: ""},
-		{tok: WS, pos: Pos{Line: 0, Char: 16}, lit: " "},
-		{tok: WHERE, pos: Pos{Line: 0, Char: 17}, lit: ""},
-		{tok: WS, pos: Pos{Line: 0, Char: 22}, lit: " "},
-		{tok: IDENT, pos: Pos{Line: 0, Char: 23}, lit: "n"},
-		{tok: DOT, pos: Pos{Line: 0, Char: 24}, lit: ""},
-		{tok: IDENT, pos: Pos{Line: 0, Char: 25}, lit: "name"},
-		{tok: WS, pos: Pos{Line: 0, Char: 29}, lit: " "},
-		{tok: EQ, pos: Pos{Line: 0, Char: 30}, lit: ""},
-		{tok: WS, pos: Pos{Line: 0, Char: 31}, lit: " "},
-		{tok: STRING, pos: Pos{Line: 0, Char: 31}, lit: "Rafael"},
-		{tok: WS, pos: Pos{Line: 0, Char: 40}, lit: " "},
-		{tok: RETURN, pos: Pos{Line: 0, Char: 41}, lit: ""},
-		{tok: WS, pos: Pos{Line: 0, Char: 47}, lit: " "},
-		{tok: IDENT, pos: Pos{Line: 0, Char: 48}, lit: "n"},
-		{tok: EOF, pos: Pos{Line: 0, Char: 50}, lit: ""},
+		{tok: cypher.MATCH, pos: cypher.Pos{Line: 0, Char: 0}, lit: ""},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 5}, lit: " "},
+		{tok: cypher.LPAREN, pos: cypher.Pos{Line: 0, Char: 6}, lit: ""},
+		{tok: cypher.IDENT, pos: cypher.Pos{Line: 0, Char: 7}, lit: "n"},
+		{tok: cypher.COLON, pos: cypher.Pos{Line: 0, Char: 8}, lit: ""},
+		{tok: cypher.IDENT, pos: cypher.Pos{Line: 0, Char: 9}, lit: "Person"},
+		{tok: cypher.RPAREN, pos: cypher.Pos{Line: 0, Char: 15}, lit: ""},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 16}, lit: " "},
+		{tok: cypher.WHERE, pos: cypher.Pos{Line: 0, Char: 17}, lit: ""},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 22}, lit: " "},
+		{tok: cypher.IDENT, pos: cypher.Pos{Line: 0, Char: 23}, lit: "n"},
+		{tok: cypher.DOT, pos: cypher.Pos{Line: 0, Char: 24}, lit: ""},
+		{tok: cypher.IDENT, pos: cypher.Pos{Line: 0, Char: 25}, lit: "name"},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 29}, lit: " "},
+		{tok: cypher.EQ, pos: cypher.Pos{Line: 0, Char: 30}, lit: ""},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 31}, lit: " "},
+		{tok: cypher.STRING, pos: cypher.Pos{Line: 0, Char: 31}, lit: "Rafael"},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 40}, lit: " "},
+		{tok: cypher.RETURN, pos: cypher.Pos{Line: 0, Char: 41}, lit: ""},
+		{tok: cypher.WS, pos: cypher.Pos{Line: 0, Char: 47}, lit: " "},
+		{tok: cypher.IDENT, pos: cypher.Pos{Line: 0, Char: 48}, lit: "n"},
+		{tok: cypher.EOF, pos: cypher.Pos{Line: 0, Char: 50}, lit: ""},
 	}
 
 	// Create a scanner.
 	v := `MATCH (n:Person) WHERE n.name = "Rafael" RETURN n`
-	s := NewScanner(strings.NewReader(v))
+	s := cypher.NewScanner(strings.NewReader(v))
 
 	// Continually scan until we reach the end.
 	var act []result
 	for {
 		tok, pos, lit := s.Scan()
 		act = append(act, result{tok, pos, lit})
-		if tok == EOF {
+		if tok == cypher.EOF {
 			break
 		}
 	}
