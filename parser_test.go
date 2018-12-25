@@ -40,13 +40,19 @@ func TestParseNodePatterns(t *testing.T) {
 			in:  "MATCH ( :Human) RETURN",
 			out: "MATCH ( :Human) RETURN",
 		},
+		{
+			in:  "MATCH ( :Human ) RETURN;",
+			out: "MATCH ( :Human) RETURN",
+		},
 	} {
 		q, err := cypher.ParseQuery(query.in)
 		if err != nil {
 			t.Errorf("%s", err)
+			break
 		}
 		if strings.Trim(q.String(), " ") != query.out {
 			t.Errorf("\nExpected:\n\t%s\nGot:\n\t%s", query.out, q)
+			break
 		}
 	}
 }

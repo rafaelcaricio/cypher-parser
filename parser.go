@@ -30,11 +30,10 @@ func (p *Parser) ParseQuery() (q Query, err error) {
 			continue
 		} else {
 			p.Unscan()
-			sq, err := p.ParseSingleQuery()
+			q.Root, err = p.ParseSingleQuery()
 			if err != nil {
 				return q, err
 			}
-			q = Query{Root: *sq}
 		}
 	}
 }

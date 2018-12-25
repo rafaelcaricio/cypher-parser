@@ -18,7 +18,7 @@ func TestQueryToString(t *testing.T) {
 			"name": cypher.StrLiteral("Adam"),
 		},
 	}
-	q.Root = cypher.SingleQuery{
+	q.Root = &cypher.SingleQuery{
 		Reading: []cypher.ReadingClause{
 			{Pattern: []cypher.MatchPattern{
 				{Elements: []cypher.PatternElement{node}},

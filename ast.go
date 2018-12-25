@@ -7,7 +7,7 @@ import (
 
 // Query represents the Cypher query root element.
 type Query struct {
-	Root SingleQuery
+	Root *SingleQuery
 }
 
 func (q Query) String() string {
