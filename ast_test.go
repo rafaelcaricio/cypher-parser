@@ -10,22 +10,22 @@ func TestQueryToString(t *testing.T) {
 	strQuery := `MATCH (user :User {name: "Adam"}) RETURN user`
 
 	q := cypher.Query{}
-	user := "user"
+	user := cypher.Variable("user")
 	node := cypher.NodePattern{
 		Variable: &user,
 		Labels:   []string{"User"},
 		Properties: map[string]cypher.Expr{
-			"name": cypher.Literal("Adam"),
+			"name": cypher.StrLiteral("Adam"),
 		},
 	}
-	q.Stmt = cypher.SingleQuery{
+	q.Root = cypher.SingleQuery{
 		Reading: []cypher.ReadingClause{
 			{Pattern: []cypher.MatchPattern{
 				{Elements: []cypher.PatternElement{node}},
 			}},
 		},
 		ReturnItems: []cypher.Expr{
-			cypher.Symbol(user),
+			user,
 		},
 	}
 

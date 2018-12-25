@@ -151,52 +151,52 @@ var tokens = [...]string{
 	SEMICOLON: ";",
 	DOT:       ".",
 
-	CREATE:     "CREATE",
-	DELETE:     "DELETE",
-	DETACH:     "DETACH",
-	EXISTS:     "EXISTS",
-	MATCH:      "MATCH",
-	MERGE:      "MERGE",
-	OPTIONAL:   "OPTIONAL",
-	REMOVE:     "REMOVE",
-	RETURN:     "RETURN",
-	SET:        "SET",
-	UNION:      "UNION",
-	UNWIND:     "UNWIND",
-	WITH:       "WITH",
-	LIMIT:      "LIMIT",
-	ORDER:      "ORDER",
-	SKIP:       "SKIP",
-	WHERE:      "WHERE",
+	ADD:        "ADD",
+	ALL:        "ALL",
+	AS:         "AS",
 	ASC:        "ASC",
 	ASCENDING:  "ASCENDING",
 	BY:         "BY",
+	CASE:       "CASE",
+	CONSTRAINT: "CONSTRAINT",
+	CONTAINS:   "CONTAINS",
+	CREATE:     "CREATE",
+	DELETE:     "DELETE",
 	DESC:       "DESC",
 	DESCENDING: "DESCENDING",
-	ON:         "ON",
-	ALL:        "ALL",
-	CASE:       "CASE",
+	DETACH:     "DETACH",
+	DISTINCT:   "DISTINCT",
+	DO:         "DO",
+	DROP:       "DROP",
 	ELSE:       "ELSE",
 	END:        "END",
-	THEN:       "THEN",
-	WHEN:       "WHEN",
-	AS:         "AS",
-	CONTAINS:   "CONTAINS",
-	DISTINCT:   "DISTINCT",
 	ENDS:       "ENDS",
+	EXISTS:     "EXISTS",
+	FOR:        "FOR",
 	IN:         "IN",
 	IS:         "IS",
-	STARTS:     "STARTS",
-	CONSTRAINT: "CONSTRAINT",
-	DO:         "DO",
-	ADD:        "ADD",
-	DROP:       "DROP",
-	FOR:        "FOR",
+	LIMIT:      "LIMIT",
 	MANDATORY:  "MANDATORY",
+	MATCH:      "MATCH",
+	MERGE:      "MERGE",
 	OF:         "OF",
+	ON:         "ON",
+	OPTIONAL:   "OPTIONAL",
+	ORDER:      "ORDER",
+	REMOVE:     "REMOVE",
 	REQUIRE:    "REQUIRE",
+	RETURN:     "RETURN",
 	SCALAR:     "SCALAR",
+	SET:        "SET",
+	SKIP:       "SKIP",
+	STARTS:     "STARTS",
+	THEN:       "THEN",
+	UNION:      "UNION",
 	UNIQUE:     "UNIQUE",
+	UNWIND:     "UNWIND",
+	WHEN:       "WHEN",
+	WHERE:      "WHERE",
+	WITH:       "WITH",
 }
 
 var keywords map[string]Token
@@ -223,6 +223,14 @@ func (tok Token) String() string {
 		return tokens[tok]
 	}
 	return ""
+}
+
+// tokstr returns a literal if provided, otherwise returns the token string.
+func tokstr(tok Token, lit string) string {
+	if lit != "" {
+		return lit
+	}
+	return tok.String()
 }
 
 // Lookup returns the token associated with a given string.

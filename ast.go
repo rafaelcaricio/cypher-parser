@@ -7,11 +7,11 @@ import (
 
 // Query represents the Cypher query root element.
 type Query struct {
-	Stmt SingleQuery
+	Root SingleQuery
 }
 
 func (q Query) String() string {
-	return q.Stmt.String()
+	return q.Root.String()
 }
 
 // SingleQuery ...
@@ -80,7 +80,7 @@ func (rc ReadingClause) String() string {
 
 // MatchPattern ...
 type MatchPattern struct {
-	Variable *string
+	Variable *Variable
 	Elements []PatternElement
 }
 
@@ -90,7 +90,7 @@ func (mp MatchPattern) String() string {
 	buf.WriteString("MATCH ")
 
 	if mp.Variable != nil {
-		_, _ = buf.WriteString(*mp.Variable)
+		_, _ = buf.WriteString((*mp.Variable).String())
 		_, _ = buf.WriteString(" = ")
 	}
 
@@ -112,7 +112,7 @@ func (ep EdgePattern) patternElem() {}
 
 // NodePattern ...
 type NodePattern struct {
-	Variable   *string
+	Variable   *Variable
 	Labels     []string
 	Properties map[string]Expr
 }
@@ -123,7 +123,7 @@ func (np NodePattern) String() string {
 	_, _ = buf.WriteRune('(')
 
 	if np.Variable != nil {
-		_, _ = buf.WriteString(*np.Variable)
+		_, _ = buf.WriteString((*np.Variable).String())
 	}
 
 	for _, l := range np.Labels {
@@ -251,6 +251,13 @@ func (o OrderBy) String() string {
 	return ""
 }
 
+// Variable ...
+type Variable string
+
+func (v Variable) String() string {
+	return string(v)
+}
+
 // Symbol ...
 type Symbol string
 
@@ -258,11 +265,11 @@ func (s Symbol) String() string {
 	return string(s)
 }
 
-// Literal ...
-type Literal string
+// StrLiteral ...
+type StrLiteral string
 
-func (l Literal) String() string {
-	return fmt.Sprintf("\"%s\"", string(l))
+func (s StrLiteral) String() string {
+	return fmt.Sprintf("\"%s\"", string(s))
 }
 
 // Expr ...
@@ -271,5 +278,6 @@ type Expr interface {
 	String() string
 }
 
-func (s Symbol) exp()  {}
-func (l Literal) exp() {}
+func (v Variable) exp()   {}
+func (s Symbol) exp()     {}
+func (s StrLiteral) exp() {}
