@@ -39,6 +39,8 @@ func TestScanInput(t *testing.T) {
 		{in: `/`, tok: cypher.DIV, lit: ""},
 		{in: `  `, tok: cypher.WS, lit: "  "},
 		{in: `[`, tok: cypher.LBRACKET, lit: ""},
+		{in: "`nice`", tok: cypher.IDENT, lit: "nice"},
+		{in: "`true`", tok: cypher.IDENT, lit: "true"},
 	} {
 		s := cypher.NewScanner(strings.NewReader(tc.in))
 		tok, _, lit := s.Scan()
